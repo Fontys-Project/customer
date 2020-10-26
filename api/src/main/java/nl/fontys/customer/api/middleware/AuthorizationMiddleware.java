@@ -1,6 +1,7 @@
 package nl.fontys.customer.api.middleware;
 
 import nl.fontys.customer.api.security.jwt.TokenParser;
+import nl.fontys.customer.api.security.jwt.exception.AuthorizationException;
 import nl.fontys.customer.api.security.jwt.model.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.io.IOException;
 @Component
 public class AuthorizationMiddleware extends OncePerRequestFilter {
 
+    private final static String TOKEN_TYPE = "Bearer";
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
     private final TokenParser tokenParser;
@@ -27,19 +29,14 @@ public class AuthorizationMiddleware extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws AuthorizationException, IOException, ServletException {
 
-        try {
-            String rawToken = request.getHeader(AUTHORIZATION_HEADER);
-            rawToken = rawToken.replace("Bearer ", "");
-            Token token = this.tokenParser.parse(rawToken);
+        String rawToken = request.getHeader(AUTHORIZATION_HEADER);
+        rawToken = rawToken.replace(TOKEN_TYPE, "");
+        Token token = this.tokenParser.parse(rawToken);
 
-            request.getSession().setAttribute("session", token);
+        request.getSession().setAttribute("session", token);
 
-        } catch (Exception ex) {
-            response.sendError(403, ex.getMessage());
-            return;
-        }
         filterChain.doFilter(request, response);
     }
 }

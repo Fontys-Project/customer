@@ -9,8 +9,6 @@ import java.security.PublicKey;
 
 public class JwtTokenParser implements TokenParser {
 
-    private final static String TOKEN_TYPE = "Bearer";
-
     private final PublicKey publicKey;
 
     public JwtTokenParser(PublicKey publicKey) {
