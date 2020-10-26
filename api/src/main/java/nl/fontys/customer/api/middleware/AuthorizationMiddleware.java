@@ -11,6 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+
 @Component
 public class AuthorizationMiddleware extends OncePerRequestFilter {
 
@@ -25,17 +27,16 @@ public class AuthorizationMiddleware extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException {
+                                    FilterChain filterChain) throws ServletException, IOException {
 
-        String rawToken = request.getHeader(AUTHORIZATION_HEADER);
-        Token token = this.validateToken(rawToken);
-    }
-
-    private Token validateToken(String rawToken) throws ServletException {
         try {
-            return this.tokenParser.parse(rawToken);
-        } catch (Exception e) {
-            throw new ServletException(e);
+            String rawToken = request.getHeader(AUTHORIZATION_HEADER);
+            rawToken = rawToken.replace("Bearer ", "");
+            Token token = this.tokenParser.parse(rawToken);
+        } catch (Exception ex) {
+            response.sendError(403, ex.getMessage());
+            return;
         }
+        filterChain.doFilter(request, response);
     }
 }

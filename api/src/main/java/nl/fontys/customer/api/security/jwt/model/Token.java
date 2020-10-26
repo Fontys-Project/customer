@@ -1,6 +1,8 @@
 package nl.fontys.customer.api.security.jwt.model;
 
-public class Token {
+import io.jsonwebtoken.impl.DefaultClaims;
+
+public class Token extends DefaultClaims {
 
     private final String email;
 
