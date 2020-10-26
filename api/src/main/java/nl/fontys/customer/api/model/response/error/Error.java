@@ -9,6 +9,10 @@ public class Error {
     private final String title;
     private final String detail;
 
+    public Error(int code, List<Source> source, Throwable cause) {
+        this(code, source, cause.getClass().getSimpleName(), cause.getMessage());
+    }
+
     public Error(int code, List<Source> source, String title, String detail) {
         this.code = code;
         this.source = source;

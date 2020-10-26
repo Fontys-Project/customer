@@ -1,9 +1,8 @@
 package nl.fontys.customer.api.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
-import nl.fontys.customer.api.security.jwt.exception.TokenValidationException;
+import nl.fontys.customer.api.security.jwt.exception.AuthorizationException;
 import nl.fontys.customer.api.security.jwt.model.Token;
 
 import java.security.PublicKey;
@@ -19,13 +18,13 @@ public class JwtTokenParser implements TokenParser {
     }
 
     @Override
-    public Token parse(String rawToken) throws TokenValidationException {
+    public Token parse(String rawToken) throws AuthorizationException {
         try {
-            Jws<Claims> token = Jwts.parser().setSigningKey(this.publicKey).parseClaimsJws(rawToken);
-
-            return null;
+            ObjectMapper mapper = new ObjectMapper();
+            Object rawBody = Jwts.parser().setSigningKey(this.publicKey).parse(rawToken).getBody();
+            return mapper.convertValue(rawBody, Token.class);
         } catch (Exception ex) {
-            throw new TokenValidationException(ex);
+            throw new AuthorizationException(ex.getMessage());
         }
     }
 }

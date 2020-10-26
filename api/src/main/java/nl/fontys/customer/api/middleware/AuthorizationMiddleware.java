@@ -33,6 +33,9 @@ public class AuthorizationMiddleware extends OncePerRequestFilter {
             String rawToken = request.getHeader(AUTHORIZATION_HEADER);
             rawToken = rawToken.replace("Bearer ", "");
             Token token = this.tokenParser.parse(rawToken);
+
+            request.getSession().setAttribute("session", token);
+
         } catch (Exception ex) {
             response.sendError(403, ex.getMessage());
             return;

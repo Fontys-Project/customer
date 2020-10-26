@@ -1,13 +1,22 @@
 package nl.fontys.customer.api.security.jwt.model;
 
-import io.jsonwebtoken.impl.DefaultClaims;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public class Token extends DefaultClaims {
+import java.util.ArrayList;
+import java.util.List;
 
-    private final String email;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Token {
 
-    public Token(String email) {
-        this.email = email;
+    private List<String> permissions = new ArrayList<>();
+    private String email = "";
+
+    protected Token() {
+
+    }
+
+    public List<String> getPermissions() {
+        return this.permissions;
     }
 
     public String getEmail() {
