@@ -6,9 +6,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @SpringBootApplication
 @EnableMongoRepositories(basePackages = "nl.fontys.customer.data")
-public class Customer {
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(Customer.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

@@ -30,7 +30,7 @@ public class CustomerController {
     @GetMapping(value = "/")
     public ResponseCustomer getCustomer(HttpServletRequest request) {
 
-        Customer customer = new Customer("mail", "name", "asdf");
+        Customer customer = new Customer("mail", "name", "asdf",null);
         this.customerRepository.save(customer);
 
         Token token = (Token) request.getSession().getAttribute("session");
@@ -45,7 +45,7 @@ public class CustomerController {
     public ResponseCustomer createCustomer(RequestCustomer requestCustomer) {
         // Purely a blank endpoint, returning nothing yet.
 
-        Customer customer = new Customer("mail", "name", "asdf");
+        Customer customer = new Customer("mail", "name", "asdf",null);
         this.customerRepository.save(customer);
 
         return null;

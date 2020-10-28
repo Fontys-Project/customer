@@ -17,4 +17,16 @@ public class CustomerResource {
         return customerRepository.findAll();
     }
 
+    public void deleteById(String mail){
+        customerRepository.deleteById(mail);
+    }
+
+    public void getById(String mail){
+        customerRepository.findById(mail);
+    }
+
+    public void save(Customer customer){
+        customerRepository.save(customer);
+    }
+
 }

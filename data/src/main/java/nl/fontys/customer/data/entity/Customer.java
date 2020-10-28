@@ -3,6 +3,8 @@ package nl.fontys.customer.data.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document
 public class Customer {
 
@@ -10,11 +12,13 @@ public class Customer {
     private String mail;
     private String name;
     private String birthdate;
+    private List<Address> addresses;
 
-    public Customer(String mail, String name, String birthdate) {
+    public Customer(String mail, String name, String birthdate, List<Address> addresses) {
         this.mail = mail;
         this.name = name;
         this.birthdate = birthdate;
+        this.addresses = addresses;
     }
 
     public String getMail() {
@@ -40,5 +44,6 @@ public class Customer {
     public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
     }
+
 
 }
