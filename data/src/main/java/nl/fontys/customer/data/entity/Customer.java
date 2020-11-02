@@ -45,5 +45,11 @@ public class Customer {
         this.birthdate = birthdate;
     }
 
+    public List<Address> getAddresses() {
+        return this.addresses;
+    }
 
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
 }
