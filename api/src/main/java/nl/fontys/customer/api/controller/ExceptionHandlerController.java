@@ -24,7 +24,8 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler({ Exception.class })
-    public ResponseEntity<ErrorResponse> handleAll() {
+    public ResponseEntity<ErrorResponse> handleAll(Exception e) {
+        e.printStackTrace();
         return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error",
                 "An unexpected exception occured.");
     }
