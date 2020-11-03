@@ -4,8 +4,8 @@ import java.util.List;
 
 public class RequestCustomer {
 
-    private final String name;
     private final String email;
+    private final String name;
     private final String birthDate;
     private final List<RequestAddress> addresses;
     private final List<RequestContactMedium> contactMedia;

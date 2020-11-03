@@ -2,15 +2,15 @@ package nl.fontys.customer.api.model.response;
 
 public class JsonAPIResponse {
 
-    public static final String V1 = "1.0";
+    public static transient final String V1 = "1.0";
 
-    private final String version;
+    private final JsonAPIVersion jsonapi;
 
-    public JsonAPIResponse(String version) {
-        this.version = version;
+    public JsonAPIResponse(JsonAPIVersion jsonapi) {
+        this.jsonapi = jsonapi;
     }
 
-    public String getVersion() {
-        return this.version;
+    public JsonAPIVersion getJsonAPI() {
+        return this.jsonapi;
     }
 }
