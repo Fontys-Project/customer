@@ -1,0 +1,20 @@
+{
+  "iat": 1604602507,
+  "nbf": 1604602507,
+  "jti": "196c6871-e62b-40bd-ae97-3f4aaa0300c9",
+  "exp": 1604603407,
+  "identity": 1,
+  "fresh": true,
+  "type": "access",
+  "user_claims": {
+    "roles": [
+      "Admin"
+    ],
+    "active": true,
+    "id": 1,
+    "username": "admin@wmstest.nl",
+    "permissions": [
+      "CUSTOMER_CUSTOMER_CREATE_OTHER"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "roles": [
+    "Admin"
+  ],
+  "active": true,
+  "id": 1,
+  "username": "admin@wmstest.nl",
+  "permissions": [
+    "CUSTOMER_CUSTOMER_CREATE_OTHER"
+  ],
+  "myReallyCoolUnknownField": "hello"
+}

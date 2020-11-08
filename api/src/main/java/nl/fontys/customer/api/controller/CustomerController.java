@@ -40,7 +40,7 @@ public class CustomerController {
         this.customerRepository.save(customer);
 
         Token token = (Token) request.getSession().getAttribute("session");
-        if (!token.getPermissions().contains("CUSTOMER_GET_CUSTOMER_ALL")) {
+        if (!token.getUserClaims().getPermissions().contains("CUSTOMER_GET_CUSTOMER_ALL")) {
             throw new AuthorizationException("Missing permission CUSTOMER_GET_CUSTOMER");
         }
 
