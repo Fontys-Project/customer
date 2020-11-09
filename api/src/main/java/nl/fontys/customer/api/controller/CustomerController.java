@@ -1,5 +1,6 @@
 package nl.fontys.customer.api.controller;
 
+import nl.fontys.customer.api.model.api.v1.request.RequestAddress;
 import nl.fontys.customer.api.model.api.v1.request.RequestCustomer;
 import nl.fontys.customer.api.model.api.v1.response.ResponseAddress;
 import nl.fontys.customer.api.model.api.v1.response.ResponseCustomer;
@@ -9,17 +10,12 @@ import nl.fontys.customer.data.entity.Address;
 import nl.fontys.customer.data.entity.Customer;
 import nl.fontys.customer.data.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,24 +30,33 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/")
-    public List<ResponseCustomer> getCustomer(HttpServletRequest request) {
+    public List<ResponseCustomer> getAllCustomers(HttpServletRequest request) {
 
-        Customer customer = new Customer("mail", "name", "asdf",null);
-        this.customerRepository.save(customer);
-
-        Token token = (Token) request.getSession().getAttribute("session");
-        if (!token.getUserClaims().getPermissions().contains("CUSTOMER_GET_CUSTOMER_ALL")) {
-            throw new AuthorizationException("Missing permission CUSTOMER_GET_CUSTOMER");
-        }
+        this.assertHasPermission(request, "CUSTOMER_CUSTOMER_GET_ALL");
 
         return this.customerRepository.findAll().stream()
                 .map(this::fromEntityCustomer)
                 .collect(Collectors.toList());
     }
 
+    @GetMapping(value = "/{email}")
+    public ResponseCustomer getCustomer(HttpServletRequest request, @PathVariable String email) {
+
+        this.assertHasPermission(request, "CUSTOMER_CUSTOMER_GET_OTHER");
+
+        Optional<Customer> queryResult = this.customerRepository.findById(email);
+        if (queryResult.isEmpty()) {
+            // TODO: throw 404
+            return null;
+        }
+
+        return this.fromEntityCustomer(queryResult.get());
+    }
+
     @PostMapping(value = "/")
-    public ResponseCustomer createCustomer(@RequestBody RequestCustomer reqCustomer) {
-        // Purely a blank endpoint, returning nothing yet.
+    public ResponseCustomer createCustomer(HttpServletRequest request, @RequestBody RequestCustomer reqCustomer) {
+
+        this.assertHasPermission(request, "CUSTOMER_CUSTOMER_CREATE_OTHER");
 
         List<Address> addresses = reqCustomer.getAddresses().stream()
                 .map(a -> new Address(a.getCountry(), a.getPostalCode(), a.getStreet(), a.getHouseNumber()))
@@ -64,10 +69,63 @@ public class CustomerController {
         return this.fromEntityCustomer(customer);
     }
 
-    @PutMapping(value = "/{customerId}")
-    public ResponseCustomer updateCustomer(@PathVariable String customerId, RequestCustomer requestCustomer) {
-        // Purely a blank endpoint, returning nothing yet.
-        return null;
+    @PutMapping(value = "/{email}")
+    public ResponseCustomer updateCustomer(HttpServletRequest request, @PathVariable String email,
+                                           @RequestBody RequestCustomer requestCustomer) {
+
+        this.assertHasPermission(request, "CUSTOMER_CUSTOMER_UPDATE_OTHER");
+
+        Optional<Customer> queryResult = this.customerRepository.findById(email);
+        if (queryResult.isEmpty()) {
+            // TODO: throw 404
+            return null;
+        }
+
+        Customer customerDataFromRequest = this.fromRequestCustomer(requestCustomer);
+
+        this.customerRepository.save(customerDataFromRequest);
+
+        return this.fromEntityCustomer(customerDataFromRequest);
+    }
+
+    @DeleteMapping(value = "/{email}")
+    public ResponseCustomer deleteCustomer(HttpServletRequest request, @PathVariable String email) {
+
+        this.assertHasPermission(request, "CUSTOMER_CUSTOMER_DELETE_OTHER");
+
+        Optional<Customer> queryResult = this.customerRepository.findById(email);
+        if (queryResult.isEmpty()) {
+            // TODO: throw 404
+            return null;
+        }
+
+        this.customerRepository.delete(queryResult.get());
+
+        return this.fromEntityCustomer(queryResult.get());
+    }
+
+    private void assertHasPermission(HttpServletRequest request, String permission) {
+        Token token = (Token) request.getSession().getAttribute("session");
+        if (!token.getUserClaims().getPermissions().contains(permission)) {
+            throw new AuthorizationException("Missing permission " + permission);
+        }
+    }
+
+    private Customer fromRequestCustomer(RequestCustomer requestCustomer) {
+        return new Customer(requestCustomer.getEmail(), requestCustomer.getName(), requestCustomer.getBirthDate(),
+                this.fromRequestAddresses(requestCustomer.getAddresses()));
+    }
+
+    private Address fromRequestAddress(RequestAddress requestAddress) {
+        return new Address(requestAddress.getHouseNumber(), requestAddress.getPostalCode(), requestAddress.getCountry(),
+                requestAddress.getStreet());
+    }
+
+    private List<Address> fromRequestAddresses(List<RequestAddress> requestAddresses) {
+        if (requestAddresses == null) return new ArrayList<>();
+        return requestAddresses.stream()
+                .map(this::fromRequestAddress)
+                .collect(Collectors.toList());
     }
 
     private ResponseAddress fromEntityAddress(Address address) {
