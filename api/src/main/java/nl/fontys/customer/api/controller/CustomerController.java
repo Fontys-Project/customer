@@ -1,5 +1,6 @@
 package nl.fontys.customer.api.controller;
 
+import nl.fontys.customer.api.exception.EntityNotFoundException;
 import nl.fontys.customer.api.model.api.v1.request.RequestAddress;
 import nl.fontys.customer.api.model.api.v1.request.RequestCustomer;
 import nl.fontys.customer.api.model.api.v1.response.ResponseAddress;
@@ -46,8 +47,7 @@ public class CustomerController {
 
         Optional<Customer> queryResult = this.customerRepository.findById(email);
         if (queryResult.isEmpty()) {
-            // TODO: throw 404
-            return null;
+            throw new EntityNotFoundException("Customer not found");
         }
 
         return this.fromEntityCustomer(queryResult.get());
@@ -77,8 +77,7 @@ public class CustomerController {
 
         Optional<Customer> queryResult = this.customerRepository.findById(email);
         if (queryResult.isEmpty()) {
-            // TODO: throw 404
-            return null;
+            throw new EntityNotFoundException("Customer not found");
         }
 
         Customer customerDataFromRequest = this.fromRequestCustomer(requestCustomer);
@@ -95,8 +94,7 @@ public class CustomerController {
 
         Optional<Customer> queryResult = this.customerRepository.findById(email);
         if (queryResult.isEmpty()) {
-            // TODO: throw 404
-            return null;
+            throw new EntityNotFoundException("Customer not found");
         }
 
         this.customerRepository.delete(queryResult.get());
