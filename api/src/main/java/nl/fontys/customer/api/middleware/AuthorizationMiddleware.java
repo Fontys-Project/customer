@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@Component
+//@Component
 public class AuthorizationMiddleware extends OncePerRequestFilter {
 
     private final static String TOKEN_TYPE = "Bearer";
